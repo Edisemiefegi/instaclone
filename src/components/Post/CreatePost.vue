@@ -9,7 +9,7 @@
     </i>
     <div
       :class="preview ? 'w-7/12' : 'w-4/12'"
-      class="bg-white flex-col rounded-xl flex font-medium h-fit"
+      class="bg-white overflow-hidden flex-col rounded-xl flex font-medium h-fit"
     >
       <p class="p-3 w-full text-center border-b">Create new Post</p>
 
@@ -21,19 +21,13 @@
           >
             <i class="pi pi-images text-[100px]"></i>
             <p>Post your pictures and videos here</p>
-            <button
-              @click="selectFile"
-              class="bg-blue-400 p-2 text-white text-sm hover:bg-blue-500 rounded-md"
-            >
-              Select From Computer
-            </button>
-            <input
-              type="file"
-              @change="handleUpload"
-              accept="image/*"
-              ref="inputRef"
-              class="hidden"
-            />
+            <UploadFile multiple @files="handleUpload">
+              <button
+                class="bg-blue-400 p-2 text-white text-sm hover:bg-blue-500 rounded-md"
+              >
+                Select From Computer
+              </button>
+            </UploadFile>
           </div>
           <Load v-if="loading" />
           <div v-if="preview">
@@ -66,6 +60,7 @@ import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 import Load from "../Load.vue";
 import ProfileCard from "../ProfileSection/ProfileCard.vue";
+import UploadFile from "../ui/UploadFile.vue";
 
 const $toast = useToast();
 const store = usedataStore();
@@ -73,28 +68,21 @@ const store = usedataStore();
 const emit = defineEmits(["close"]);
 
 const loading = ref(false);
-const inputRef = ref(null);
-const file = ref(null);
-const preview = ref(null);
+const preview = ref(false);
 
 const data = ref({
   image: null,
   caption: "",
 });
 
-const selectFile = () => {
-  inputRef.value?.click();
-};
-
-const handleUpload = async (event) => {
+const handleUpload = async (files) => {
   try {
     loading.value = true;
-    const file = event.target.files[0];
+    const file = files[0];
     const url = await uploadFile(file);
-    preview.value = URL.createObjectURL(file);
+    // console.log(url);
     data.value.image = url;
-
-    // console.log(url, data.value.image);
+    preview.value = true;
   } catch (error) {
     console.log(error.message);
   } finally {
@@ -107,7 +95,7 @@ const handlesubmit = () => {
     loading.value = true;
     createNewPost(data.value);
     $toast.success("post saved");
-    console.log(store.posts, "post");
+    emit("close");
   } catch (error) {
   } finally {
     loading.value = false;

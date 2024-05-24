@@ -5,15 +5,19 @@
       logout
     </button> -->
 
-      <HomePostCard v-for="item in 4" :key="item" />
+      <HomePostCard v-for="item in allposts" :key="item" :post="item" />
     </div>
+
     <div class="hidden lg:block w-5/12 h-96 border-2">
       <div
         class="bg-white flex flex-col gap-5 border"
         v-for="item in 5"
         :key="item"
       >
-        <ProfileCard />
+        <ProfileCard
+          :username="logginUser.username"
+          :fullname="logginUser.fullname"
+        />
       </div>
     </div>
   </main>
@@ -23,15 +27,21 @@
 import { onMounted, computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { usedataStore } from "@/stores/dataStore";
+import { getAllUsersPosts } from "@/services/user.js";
 import HomePostCard from "@/components/Post/HomePostCard.vue";
 import ProfileCard from "@/components/ProfileSection/ProfileCard.vue";
 
 const store = usedataStore();
+const router = useRouter();
 
 const logginUser = computed(() => store.getLoggedInUser);
-console.log(logginUser.value);
 
-const router = useRouter();
+const allposts = computed(() => store.allPosts);
+console.log("All Post", allposts.value);
+
+onMounted(() => {
+  getAllUsersPosts();
+});
 
 // const logoutfunc = () => {
 // };

@@ -10,6 +10,8 @@ export const usedataStore = defineStore("dataStore", {
     collapsed: false,
     users: [],
     posts: [],
+    allPosts: [],
+    allPostSaved: [],
     loggedInUser: null,
   }),
 

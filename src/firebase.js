@@ -20,6 +20,7 @@ import {
   addDoc,
   query,
   where,
+  deleteDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -55,4 +56,5 @@ export {
   addDoc,
   query,
   where,
+  deleteDoc,
 };

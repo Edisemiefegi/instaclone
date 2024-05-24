@@ -1,21 +1,22 @@
 <template>
   <div
-    class="bg-gray-400 w-full aspect-square hover:bg-opacity-50"
+    class="border w-full aspect-square hover:bg-opacity-50"
     @click="openModal(post)"
-  ></div>
+  >
+    <img :src="post.image" alt="" class="w-full h-full object-cover" />
+  </div>
 
-  <ViewPost :open="isModalOpen" @close="isModalOpen = false" />
+  <ViewPost :open="isModalOpen" :post="post" @close="isModalOpen = false" />
 </template>
 
 <script setup>
 import ViewPost from "./ViewPost.vue";
 
 import { ref, computed, onMounted } from "vue";
-import { getPosts } from "../../services/user.js";
-import { usedataStore } from "../../stores/dataStore.js";
+import { usedataStore } from "@/stores/dataStore.js";
 
 const props = defineProps({
-  post: Number,
+  post: Object,
 });
 const store = usedataStore();
 
@@ -26,8 +27,7 @@ const openModal = (item) => {
 };
 
 onMounted(async () => {
-  await getPosts();
-  console.log(store.posts);
+  console.log(props.post);
 });
 </script>
 

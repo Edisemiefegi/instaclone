@@ -17,6 +17,8 @@ import { onMounted, computed, ref } from "vue";
 import { usedataStore } from "@/stores/dataStore";
 import { auth, onAuthStateChanged } from "@/firebase.js";
 import { useRouter } from "vue-router";
+import { initUserPost } from "@/services/user";
+import { signoutfunc } from "../services/auth";
 
 const store = usedataStore();
 const router = useRouter();
@@ -24,8 +26,12 @@ const router = useRouter();
 const logginUser = computed(() => store.getLoggedInUser);
 
 onMounted(() => {
+  initUserPost();
+
   onAuthStateChanged(auth, (user) => {
     if (!user) {
+      signoutfunc(logginUser.value);
+
       router.push({ name: "Login" });
     }
   });

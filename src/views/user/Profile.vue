@@ -32,7 +32,7 @@
     </div>
 
     <AllPost :posts="userPosts" v-if="activeTab == 'post'" />
-    <SavedPost v-if="activeTab == 'saved'" />
+    <SavedPost v-if="activeTab == 'saved'" :posts="savedPosts" />
   </main>
 </template>
 
@@ -64,6 +64,8 @@ const activeTab = computed({
 
 const username = computed(() => route.params?.username);
 const loggedinUser = computed(() => store.getLoggedInUser);
+const loggedInUserPost = computed(() => store.posts);
+const userSavedPost = computed(() => store.allPostSaved);
 
 //Check if the username belongs to the loggedin user
 const isUserLoggedIn = computed(() => {
@@ -71,8 +73,8 @@ const isUserLoggedIn = computed(() => {
 });
 
 const user = ref(null);
-const userPosts = ref([1]);
-const savedPosts = ref([]);
+const userPosts = ref(null);
+const savedPosts = ref(null);
 
 watch(activeTab, () => {
   if (!activeTab.value) {
@@ -80,17 +82,30 @@ watch(activeTab, () => {
   }
 });
 
+const fetchUserData = () => {
+  //check if username belongs to the loggedin user
+  if (isUserLoggedIn.value) {
+    user.value = loggedinUser.value;
+    userPosts.value = loggedInUserPost.value;
+    console.log(userPosts.value);
+  } else {
+    //get the user details from firebase and return
+  }
+};
+const fetchSavedposts = () => {
+  console.log("sa");
+};
+
+watch([loggedinUser, loggedInUserPost], () => {
+  fetchUserData();
+});
+
 onMounted(() => {
   if (!activeTab.value) {
     activeTab.value = "post";
   }
-
-  //check if username belongs to the loggedin user
-  if (isUserLoggedIn.value) {
-    user.value = loggedinUser.value;
-  } else {
-    //get the user details from firebase and return
-  }
+  fetchUserData();
+  fetchSavedposts();
 });
 </script>
 

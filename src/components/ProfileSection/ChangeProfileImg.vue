@@ -10,12 +10,13 @@
         Change Profile Photo
       </button>
 
-      <button
-        @click="openFile"
-        class="p-3 w-full text-center font-medium text-blue-400 text-sm border-b"
-      >
-        Upload photo
-      </button>
+      <UploadFile @files="handleUpload">
+        <button
+          class="p-3 w-full text-center font-medium text-blue-400 text-sm border-b"
+        >
+          Upload photo
+        </button>
+      </UploadFile>
 
       <button
         class="p-3 w-full text-center font-medium text-red-400 text-sm border-b"
@@ -25,21 +26,12 @@
       <button class="p-3 w-full text-center text-sm border-b">Cancel</button>
 
       {{ loading ? "Loading..." : "" }}
-
-      <input
-        type="file"
-        @change="handleUpload"
-        accept="image/*"
-        ref="inputRef"
-        class="hidden"
-      />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-
 import { uploadFile } from "@/utils/index.js";
 import { editProfilePhoto } from "@/services/user.js";
 
@@ -53,10 +45,10 @@ const openFile = () => {
   inputRef.value?.click();
 };
 
-const handleUpload = async (event) => {
+const handleUpload = async (files) => {
   try {
     loading.value = true;
-    const file = event.target.files[0];
+    const file = files[0];
     const url = await uploadFile(file);
 
     console.log(url);

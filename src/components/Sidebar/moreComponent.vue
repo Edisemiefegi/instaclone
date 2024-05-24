@@ -57,7 +57,7 @@ const handleMenuClick = (menu) => {
     const username = logginUser.value?.username;
     router.push(`/${username}?tab=${"saved"}`);
   }
-  if (menu.label == "Log Out") {
+  if (menu.label == "Log out") {
     signoutfunc(logginUser.value);
     console.log("logout");
   }

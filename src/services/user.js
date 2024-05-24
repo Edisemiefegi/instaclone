@@ -8,13 +8,12 @@ import {
   addDoc,
   query,
   where,
+  onSnapshot,
   getDocs,
+  deleteDoc,
 } from "@/firebase.js";
 import { usedataStore } from "@/stores/dataStore";
 // import { get } from "firebase/database";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
 
 export const editProfilePhoto = async (img) => {
   try {
@@ -81,7 +80,6 @@ export const createNewPost = async (data) => {
     await updateDoc(docRef, {
       postid: docRef.id,
     });
-    store.posts.push(userpost);
 
     console.log(userpost);
   } catch (error) {
@@ -90,23 +88,109 @@ export const createNewPost = async (data) => {
   }
 };
 
-export const getPosts = async () => {
+export const initUserPost = async () => {
   try {
     const store = usedataStore();
+    const userid = store.loggedInUser.id;
 
-    const q = query(
-      collection(db, "posts"),
-      where("userid", "==", store.loggedInUser.id)
-    );
+    // console.log("USER ID", userid);
 
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      store.posts.push(doc.data());
-      console.log(doc.id, " => ", doc.data());
+    const q = query(collection(db, "posts"), where("userid", "==", userid));
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const posts = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        posts.push(data);
+      });
+
+      store.$patch({
+        posts,
+      });
     });
   } catch (error) {
     console.log(error.message);
     throw error;
+  }
+};
+
+export const addLikesToPost = async (postid) => {
+  const washingtonRef = doc(db, "posts", postid);
+  const num = 0;
+  // Set the "capital" field of the city 'DC'
+  await updateDoc(washingtonRef, {
+    likes: num++,
+  });
+};
+
+export const deletePost = async (id) => {
+  await deleteDoc(doc(db, "posts", id));
+};
+
+export const getAllUsersPosts = async () => {
+  try {
+    const store = usedataStore();
+
+    const q = query(collection(db, "posts"));
+    const posts = [];
+
+    const querySnapshot = await getDocs(q);
+
+    const populateUser = querySnapshot.forEach(async (doc) => {
+      const post = doc.data();
+      const user = await getUserByID(post?.userid);
+      post.user = user;
+      console.log(post, "snns");
+      posts.push(post);
+
+      console.log(populateUser, "pskso");
+    });
+
+    await Promise.all(populateUser);
+
+    store.$patch({
+      allPosts: posts,
+    });
+  } catch (error) {
+    console.log(error.message);
+
+    throw error;
+  }
+};
+
+export const getUserByID = async (userid) => {
+  try {
+    const docRef = doc(db, "users", userid);
+    const docSnap = await getDoc(docRef);
+
+    let user = null;
+    if (docSnap.exists()) {
+      user = docSnap.data();
+    } else {
+      console.log("No such document!");
+    }
+
+    return user;
+  } catch (error) {
+    console.error("Error fetching user or posts:", error);
+  }
+};
+
+export const getUserByUsername = async (username) => {
+  try {
+    const docRef = doc(db, "users", username);
+    const docSnap = await getDoc(docRef);
+
+    let user = null;
+    if (docSnap.exists()) {
+      user = docSnap.data();
+    } else {
+      console.log("No such document!");
+    }
+
+    return user;
+  } catch (error) {
+    console.error("Error fetching user or posts:", error);
   }
 };
