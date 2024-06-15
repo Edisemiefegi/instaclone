@@ -1,7 +1,7 @@
 <template>
   <main v-if="post" class="flex flex-col gap-4 border-b">
     <div class="flex items-center w-full justify-between">
-      <div class="flex gap-2 items-center cursor-pointer">
+      <div class="flex gap-2 items-center cursor-pointer" @click="gotoProfile">
         <ProfileCard
           :username="post?.user?.username"
           :image="post?.user?.image"
@@ -11,7 +11,13 @@
       <i class="pi pi-ellipsis-h cursor-pointer" @click="showMore = true"></i>
     </div>
     <div v-if="showMore">
-      <PostMoreDropdown @close="showMore = false" />
+      <PostMoreDropdown
+        v-for="item in users"
+        :key="item"
+        :user="item"
+        @close="showMore = false"
+        @handelSave="handelSavePost()"
+      />
     </div>
 
     <div class="w-full h-[520px] rounded-md">
@@ -21,11 +27,14 @@
     <div class="flex justify-between text-2xl">
       <div>
         <i
-          @click="handelSavePostLikes"
+          @click="handelPostLikes"
           class="pi pi-heart cursor-pointer"
           :class="liked ? 'text-red-400 w-fit' : ''"
         ></i>
-        <i class="pi pi-comment cursor-pointer"></i>
+        <i
+          class="pi pi-comment cursor-pointer"
+          @click="handleComments(post)"
+        ></i>
       </div>
       <i
         class="pi pi-bookmark cursor-pointer"
@@ -34,59 +43,92 @@
       ></i>
     </div>
 
-    <p>{{ post.likes }}</p>
+    <p>{{ post.likedBy?.length }}</p>
 
     <div class="line-clamp-3">
       <p>
         {{ post.caption }}
       </p>
-      <p class="text-gray-400">View all {{ post.comments }} comments</p>
+      <p class="text-gray-400 cursor-pointer" @click="handleComments(post)">
+        View all {{ post.comments.length }} comments
+      </p>
     </div>
-
-    <input
+    <InputComment class="w-full pb-4" v-model:value="inputValue" :post="post" />
+    <!-- <input
       type="text"
-      class="w-full text-sm outline-none pb-5"
+      class="w-full text-sm outline-none "
       name=""
       id=""
       placeholder="Add a comment..."
-    />
+    /> -->
+    <ViewPost :open="view" :post="post" @close="view = false" />
   </main>
 </template>
 
 <script setup>
 import PostMoreDropdown from "./PostMoreDropdown.vue";
 import ProfileCard from "../ProfileSection/ProfileCard.vue";
+import ViewPost from "./ViewPost.vue";
 import { usedataStore } from "@/stores/dataStore.js";
-import { onMounted, computed, ref } from "vue";
-import { addLikesToPost } from "@/services/user.js";
-
-const showMore = ref(false);
-const saved = ref(false);
-const liked = ref(false);
+import { onMounted, computed, ref, watch } from "vue";
+import { likeUnlikePost, togglesavePost } from "@/services/user.js";
+import InputComment from "./InputComment.vue";
+import { useRouter } from "vue-router";
 
 const store = usedataStore();
 
-const closeMore = () => {
-  showMore.value = false;
-};
+const router = useRouter();
 
 const props = defineProps({
   post: Object,
 });
-const handelSavePost = async () => {
-  saved.value = !saved.value;
-  // if (saved.value) {
-  //   savePosts();
-  // }
 
-  console.log("saved", saved.value);
+const showMore = ref(false);
+const view = ref(false);
+const inputValue = ref("");
+
+const users = computed(() => store.users);
+
+const logginUser = computed(() => store.getLoggedInUser);
+
+const liked = computed(() =>
+  props?.post?.likedBy.includes(logginUser.value.id)
+);
+
+const saved = computed(() => {
+  return store.PostSaved.find((e) => {
+    if (e.post.postid === props.post.postid) {
+      return e;
+    }
+  });
+});
+
+const handelSavePost = async () => {
+  try {
+    let post = props?.post;
+
+    await togglesavePost(post);
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
 };
 
-const handelSavePostLikes = () => {
-  liked.value = !liked.value;
-  if (liked.value) {
-    addLikesToPost(props.post.postid);
-  }
+const handelPostLikes = async () => {
+  let post = props?.post;
+  let userid = logginUser.value?.id;
+  await likeUnlikePost(post, userid);
+};
+
+const handleComments = async (post) => {
+  view.value = true;
+  // console.log(view.value, post);
+};
+
+const gotoProfile = async () => {
+  const username = props?.post?.user?.username;
+  // console.log(username, props.post.user, "ho");
+  router.push(`/${username}`);
 };
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="grid grid-cols-3 gap-1 flex-shrink-0">
-    <PostCard v-for="item in post" :key="item" :post="item" />
+    <PostCard v-for="item in posts" :key="item" :post="item.post" />
   </div>
 </template>
 
@@ -10,11 +10,10 @@ import { ref, computed } from "vue";
 import PostCard from "../Post/PostCard.vue";
 
 const props = defineProps({
-  post: Array,
+  posts: Array,
 });
 
-console.log(props.post, "savedpostco");
+console.log(props.posts, "savedpostco");
 </script>
 
 <style></style>
-j

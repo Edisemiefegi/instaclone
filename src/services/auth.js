@@ -31,10 +31,10 @@ export const registerUser = async (user) => {
       username: user.username,
       password: user.password,
       bio: "",
-      followers: 0,
-      following: 0,
+      followers: [],
+      following: [],
       image: "",
-      post: 0,
+      post: [],
       role: "user",
       gender: "",
     };

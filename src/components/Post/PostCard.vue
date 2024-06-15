@@ -6,7 +6,12 @@
     <img :src="post.image" alt="" class="w-full h-full object-cover" />
   </div>
 
-  <ViewPost :open="isModalOpen" :post="post" @close="isModalOpen = false" />
+  <ViewPost
+    :open="isModalOpen"
+    :post="post"
+    :user="user"
+    @close="isModalOpen = false"
+  />
 </template>
 
 <script setup>
@@ -17,6 +22,7 @@ import { usedataStore } from "@/stores/dataStore.js";
 
 const props = defineProps({
   post: Object,
+  user: Object,
 });
 const store = usedataStore();
 
@@ -27,7 +33,7 @@ const openModal = (item) => {
 };
 
 onMounted(async () => {
-  console.log(props.post);
+  // console.log(props.post);
 });
 </script>
 

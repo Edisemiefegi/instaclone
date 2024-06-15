@@ -17,7 +17,7 @@ import { onMounted, computed, ref } from "vue";
 import { usedataStore } from "@/stores/dataStore";
 import { auth, onAuthStateChanged } from "@/firebase.js";
 import { useRouter } from "vue-router";
-import { initUserPost } from "@/services/user";
+import { initUserPost, getuserSavedPosts, getAllusers } from "@/services/user";
 import { signoutfunc } from "../services/auth";
 
 const store = usedataStore();
@@ -27,6 +27,8 @@ const logginUser = computed(() => store.getLoggedInUser);
 
 onMounted(() => {
   initUserPost();
+  getuserSavedPosts();
+  getAllusers();
 
   onAuthStateChanged(auth, (user) => {
     if (!user) {

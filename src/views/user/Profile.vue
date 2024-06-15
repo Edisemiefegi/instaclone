@@ -1,7 +1,11 @@
 <template>
   <main class="px-4 w-full md:w-10/12 mx-auto flex flex-col gap-8">
     <div class="md:px-10 px-0">
-      <UserProfile :data="user" :isLoggedIn="isUserLoggedIn" />
+      <UserProfile
+        :user="user"
+        :userpost="userPosts"
+        :isLoggedIn="isUserLoggedIn"
+      />
       <HighlightVue />
     </div>
 
@@ -31,7 +35,7 @@
       </div>
     </div>
 
-    <AllPost :posts="userPosts" v-if="activeTab == 'post'" />
+    <AllPost :posts="userPosts" :user="user" v-if="activeTab == 'post'" />
     <SavedPost v-if="activeTab == 'saved'" :posts="savedPosts" />
   </main>
 </template>
@@ -43,6 +47,7 @@ import AllPost from "@/components/Post/AllPost.vue";
 import SavedPost from "@/components/Post/SavedPost.vue";
 import UserProfile from "@/components/ProfileSection/UserProfile.vue";
 
+import { getUserByUsername, getPostByuserid } from "@/services/user.js";
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { usedataStore } from "@/stores/dataStore";
@@ -57,15 +62,16 @@ const activeTab = computed({
     return route.query?.tab;
   },
   set(val) {
-    const username = loggedinUser.value?.username;
-    router.push(`/${username}?tab=${val}`);
+    router.push(`/${username.value}?tab=${val}`);
   },
 });
 
 const username = computed(() => route.params?.username);
 const loggedinUser = computed(() => store.getLoggedInUser);
 const loggedInUserPost = computed(() => store.posts);
-const userSavedPost = computed(() => store.allPostSaved);
+const userSavedPost = computed(() => store.PostSaved);
+
+console.log(username.value, "ssk");
 
 //Check if the username belongs to the loggedin user
 const isUserLoggedIn = computed(() => {
@@ -82,17 +88,28 @@ watch(activeTab, () => {
   }
 });
 
-const fetchUserData = () => {
+const fetchUserData = async () => {
   //check if username belongs to the loggedin user
   if (isUserLoggedIn.value) {
     user.value = loggedinUser.value;
     userPosts.value = loggedInUserPost.value;
-    console.log(userPosts.value);
+    console.log(userPosts.value, "fe");
   } else {
+    user.value = await getUserByUsername(username.value);
+    userPosts.value = await getPostByuserid(user.value.id);
+
+    console.log(user.value, "test", userPosts.value, user.value.id);
+
     //get the user details from firebase and return
   }
 };
-const fetchSavedposts = () => {
+
+const fetchSavedposts = async () => {
+  if (isUserLoggedIn.value) {
+    user.value = loggedinUser.value;
+    savedPosts.value = userSavedPost.value;
+    // console.log(savedPosts.value, "test");
+  }
   console.log("sa");
 };
 

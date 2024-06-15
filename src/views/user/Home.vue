@@ -37,7 +37,8 @@ const router = useRouter();
 const logginUser = computed(() => store.getLoggedInUser);
 
 const allposts = computed(() => store.allPosts);
-console.log("All Post", allposts.value);
+
+// console.log("All Post", allposts.value);
 
 onMounted(() => {
   getAllUsersPosts();

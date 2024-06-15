@@ -36,7 +36,10 @@
         </div>
 
         <div class="w-6/12 p-3 flex flex-col gap-4" v-if="preview">
-          <ProfileCard />
+          <ProfileCard
+            :image="logginUser.image"
+            :username="logginUser.username"
+          />
           <textarea
             class="w-full outline-none h-full"
             name=""
@@ -52,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { usedataStore } from "@/stores/dataStore.js";
 import { uploadFile } from "@/utils/index.js";
 import { createNewPost } from "@/services/user.js";
@@ -74,6 +77,8 @@ const data = ref({
   image: null,
   caption: "",
 });
+
+const logginUser = computed(() => store.getLoggedInUser);
 
 const handleUpload = async (files) => {
   try {

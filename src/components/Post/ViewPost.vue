@@ -21,7 +21,7 @@
         </div>
         <div class="text w-6/12 pt-4 relative flex flex-col gap-5">
           <div class="flex justify-between items-center cursor-pointer">
-            <ProfileCard :username="logginUser.username" />
+            <ProfileCard :username="user?.fullname" :image="user?.image" />
             <i class="pi pi-trash" @click="showdelete"></i>
             <div
               class="w-fit flex flex-col gap-2 p-3 rounded-lg absolute bg-black/10 top-16 -right-4"
@@ -37,16 +37,24 @@
             </div>
           </div>
           <div class="border-b w-full"></div>
-          <div class="flex gap-3 items-center">
-            <ProfileCard :username="logginUser.username" />
+          <div class="flex gap-3 flex-col h-96 overflow-auto">
+            <div class="flex gap-3 items-center">
+              <ProfileCard :username="user?.username" :image="user?.image" />
 
-            <p>{{ post.caption }}</p>
+              <p>{{ post.caption }}</p>
+            </div>
+            <Comments
+              v-for="item in post.comments"
+              :key="item"
+              :data="item"
+              :post="post"
+            />
           </div>
-          <input
-            class="outline-none w-full absolute bottom-5 border-t p-2"
-            type="text"
-            placeholder="Add a comment..."
-            v-model="inputValue"
+          {{ inputValue }}
+          <InputComment
+            class="absolute bottom-5 border-t"
+            v-model:value="inputValue"
+            :post="post"
           />
         </div>
       </div>
@@ -59,6 +67,8 @@ import ProfileCard from "@/components/ProfileSection/ProfileCard.vue";
 import { usedataStore } from "@/stores/dataStore.js";
 import { ref, computed, onMounted } from "vue";
 import { deletePost } from "@/services/user.js";
+import InputComment from "./InputComment.vue";
+import Comments from "./Comments.vue";
 
 const store = usedataStore();
 
@@ -66,6 +76,7 @@ const logginUser = computed(() => store.getLoggedInUser);
 
 const props = defineProps({
   post: Object,
+  user: Object,
   open: {
     type: Boolean,
     default: false,

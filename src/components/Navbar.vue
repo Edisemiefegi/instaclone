@@ -49,7 +49,7 @@ const showSearch = ref(false);
 if (searchtext.value.trim() !== "") {
   showSearch = true;
 }
-console.log(searchtext.value);
+// console.log(searchtext.value);
 </script>
 
 <style></style>
