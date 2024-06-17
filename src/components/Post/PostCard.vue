@@ -9,7 +9,7 @@
   <ViewPost
     :open="isModalOpen"
     :post="post"
-    :user="user"
+    :user="props.post.user"
     @close="isModalOpen = false"
   />
 </template>
@@ -31,6 +31,8 @@ const isModalOpen = ref(false);
 const openModal = (item) => {
   isModalOpen.value = true;
 };
+
+console.log(props.post.user, "pr");
 
 onMounted(async () => {
   // console.log(props.post);

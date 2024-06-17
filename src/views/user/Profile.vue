@@ -36,7 +36,7 @@
     </div>
 
     <AllPost :posts="userPosts" :user="user" v-if="activeTab == 'post'" />
-    <SavedPost v-if="activeTab == 'saved'" :posts="savedPosts" />
+    <SavedPost v-if="activeTab == 'saved'" :posts="savedPosts" :user="user" />
   </main>
 </template>
 
@@ -98,7 +98,8 @@ const fetchUserData = async () => {
     user.value = await getUserByUsername(username.value);
     userPosts.value = await getPostByuserid(user.value.id);
 
-    console.log(user.value, "test", userPosts.value, user.value.id);
+    console.log(user.value);
+    // console.log(user.value, "test", userPosts.value, user.value.id);
 
     //get the user details from firebase and return
   }

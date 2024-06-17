@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-4 items-center">
+  <div class="flex gap-4 items-center" @click="gotoProfile">
     <div
       class="w-12 h-12 rounded-full bg-slate-200 flex justify-center items-center"
     >
@@ -21,14 +21,22 @@
 <script setup>
 import { usedataStore } from "@/stores/dataStore";
 import { onMounted, computed, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const store = usedataStore();
+const router = useRouter();
 
 const props = defineProps({
   fullname: String,
   username: String,
   image: String,
 });
+
+const gotoProfile = async () => {
+  const username = props?.username;
+  // console.log(username, props.post.user, "ho");
+  router.push(`/${username}`);
+};
 
 const logginUser = computed(() => store.getLoggedInUser);
 </script>

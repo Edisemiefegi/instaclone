@@ -10,7 +10,8 @@
     <button
       v-if="value"
       @click="postcomment"
-      :class="load ? 'disabled hidden' : 'block'"
+      :disabled="load"
+      :class="load ? 'hidden' : 'block'"
       class="text-blue-400 font-medium"
     >
       Post

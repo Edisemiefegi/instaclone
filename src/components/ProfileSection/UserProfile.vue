@@ -32,10 +32,20 @@
           <button
             v-else
             @click="followUser"
+            :disabled="load"
+            :class="load ? 'hidden' : 'block'"
             class="bg-gray-200 hover:bg-gray-300 font-medium text-xs rounded-lg px-3 py-2"
           >
-            <span v-if="!follow">Follow</span> <span v-else>Unfollow</span>
+            <span v-if="isFollowingUser">Unfollow</span>
+            <span v-else>Follow</span>
           </button>
+
+          <div
+            v-if="load"
+            class="rounded-full w-6 h-6 bg-blue-300 animate-spin flex justify-center items-center"
+          >
+            <div class="rounded-full w-4 h-4 bg-slate-500"></div>
+          </div>
         </div>
       </div>
 
@@ -69,7 +79,7 @@ import { ref, computed, watch } from "vue";
 import { usedataStore } from "@/stores/dataStore";
 import ChangeProfileImg from "../ProfileSection/ChangeProfileImg.vue";
 import { useRouter } from "vue-router";
-import { FollowingUsers, getFollowers } from "@/services/user.js";
+import { FollowingUsers } from "@/services/user.js";
 
 const store = usedataStore();
 const router = useRouter();
@@ -86,29 +96,31 @@ const props = defineProps({
 });
 const loggedInUserPost = computed(() => store.posts);
 const logginUser = computed(() => store.getLoggedInUser);
-console.log(logginUser.value.following, "ssjjjeueu");
-console.log(props.user, "users");
+// console.log(logginUser.value.following, "ssjjjeueu");
+// console.log(props.user, "users");
 
 const changeProfile = ref(false);
+const load = ref(false);
+
 const showEdit = () => {
   router.push({ name: "SettingsPage" });
 };
 
-const follow = computed(() => {
-  return logginUser.value?.following.find((e) => {
-    console.log(e.id, "sjjsjoo");
-
-    if (e.id === props?.user?.id) {
-      return e;
-    }
-  });
+const isFollowingUser = computed(() => {
+  return props.user?.followers.find((e) => e.id == logginUser.value?.id);
 });
 
-console.log(follow.value);
+// console.log(isFollowingUser.value);
 
 const followUser = async () => {
-  await FollowingUsers(props?.user);
-  await getFollowers(props?.user);
+  try {
+    load.value = true;
+    if (!props.user) return;
+    await FollowingUsers(props.user);
+  } catch (error) {
+  } finally {
+    load.value = false;
+  }
 };
 </script>
 

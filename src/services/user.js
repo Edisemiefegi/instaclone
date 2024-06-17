@@ -131,6 +131,7 @@ export const getAllUsersPosts = async () => {
     const promises = querySnapshot.docs.map(async (doc) => {
       const post = doc.data();
       const user = await getUserByID(post?.userid);
+      console.log(user, "us");
       post.user = user;
       posts.push(post);
     });
@@ -359,63 +360,60 @@ export const deletecomment = async (post, id) => {
 export const FollowingUsers = async (user) => {
   if (!user) return;
 
-  const store = usedataStore();
-  const logedduser = store.loggedInUser;
+  try {
+    const store = usedataStore();
+    const logedduser = store.loggedInUser;
 
-  const docRef = doc(db, "users", logedduser.id);
+    const clonedUser = removeFollowingAndFollowrFromUser(user);
+    const clonedLoggedUser = removeFollowingAndFollowrFromUser(logedduser);
 
-  console.log(logedduser, logedduser.following, "log");
+    const docRef = doc(db, "users", logedduser.id);
+    const userRef = doc(db, "users", user.id);
 
-  const userExist = logedduser.following.find((e) => {
-    console.log(e, user.id, "usuusuuk");
-    if (e.id == user.id) {
-      return e;
-    }
-  });
-
-  if (userExist) {
-    logedduser.following = logedduser.following.filter((e) => {
-      console.log(e, e.id, user.id, user, "essss");
-      if (e.id !== user.id) {
+    const userExist = logedduser.following.find((e) => {
+      if (e.id == user.id) {
         return e;
       }
     });
-    console.log(logedduser.following);
-  } else {
-    logedduser.following.push(user);
-    console.log(logedduser.following, "floll");
+
+    if (userExist) {
+      logedduser.following = logedduser.following.filter((e) => {
+        if (e.id !== user.id) {
+          return e;
+        }
+      });
+
+      user.followers = user.followers.filter((e) => {
+        if (e.id !== logedduser.id) {
+          return e;
+        }
+      });
+    } else {
+      logedduser.following.push(clonedUser);
+      user.followers.push(clonedLoggedUser);
+    }
+
+    await updateDoc(docRef, {
+      following: logedduser.following,
+    });
+
+    await updateDoc(userRef, {
+      followers: user.followers,
+    });
+
+    // console.log(logedduser, "login");
+    // console.log(user, "user");
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
-
-  await updateDoc(docRef, {
-    following: logedduser.following,
-  });
-
-  // console.log(logedduser, "hshh");
 };
 
-export const getFollowers = async (user) => {
-  const store = usedataStore();
-  const logedduser = store.loggedInUser;
-  const docRef = doc(db, "users", logedduser.id);
+const removeFollowingAndFollowrFromUser = (user) => {
+  const clonedUser = { ...user };
 
-  console.log(logedduser, "fp", user);
+  delete clonedUser.followers;
+  delete clonedUser.following;
 
-  const follower = user.following.find((e) => {
-    console.log(e, user, "usuusuuk");
-    if (e.id == logedduser.id) {
-      return e;
-    }
-  });
-  console.log(follower, "fol");
-
-  if (follower) {
-    console.log(user, "in");
-    logedduser.follower.push(user);
-  }
-
-  await updateDoc(docRef, {
-    follower: logedduser.follower,
-  });
-
-  console.log(logedduser, "followers");
+  return clonedUser;
 };
