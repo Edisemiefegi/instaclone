@@ -18,7 +18,21 @@
     </div>
     <div class="flex flex-col gap-5 w-full md:w-8/12">
       <div class="flex gap-5">
-        <div class="rounded-full w-32 h-32 bg-slate-400 md:hidden block"></div>
+        <div class="rounded-full w-32 h-32 bg-slate-400 md:hidden block">
+          <div
+            @click="changeProfile = true"
+            class="rounded-full w-32 h-32 cursor-pointer bg-slate-300 flex justify-center items-center"
+          >
+            <i class="pi pi-image text-[40px]" v-if="!user?.image"></i>
+
+            <img
+              v-else
+              :src="user?.image"
+              alt=""
+              class="w-full h-full object-cover rounded-full"
+            />
+          </div>
+        </div>
 
         <div class="flex md:flex-row flex-col gap-4">
           <p class="text-xl">{{ user?.username }}</p>

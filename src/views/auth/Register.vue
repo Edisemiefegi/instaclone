@@ -79,18 +79,17 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { usedataStore } from "@/stores/dataStore";
 import { registerUser } from "@/services/auth";
+import { getUserByUsername } from "@/services/user";
 
 const store = usedataStore();
 const router = useRouter();
 
 const loading = ref(false);
 const showPassword = ref(false);
-
-const user = ref([]);
 
 const formInput = ref({
   email: "",
@@ -106,14 +105,22 @@ const submit = async () => {
       formInput.value.fullname?.trim() !== "" &&
       formInput.value.username?.trim() !== ""
     ) {
-      loading.value = true;
-      const payload = { ...formInput.value };
+      const data = await getUserByUsername(formInput.value.username);
 
-      await registerUser(payload);
-      router.push({ name: "Home" });
+      if (data) {
+        alert("Username already in use");
+      } else {
+        loading.value = true;
 
-      console.log(payload);
-      clear();
+        const payload = { ...formInput.value };
+
+        console.log(data, "datata");
+        await registerUser(payload);
+        router.push({ name: "Home" });
+
+        console.log(payload);
+        clear();
+      }
     } else {
       alert("fill in the necessary details");
     }
@@ -134,6 +141,8 @@ const clear = () => {
 const openLoginForm = () => {
   router.push({ name: "Login" });
 };
+
+onMounted(async () => {});
 </script>
 
 <style></style>

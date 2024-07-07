@@ -8,13 +8,13 @@
     >
     </i>
     <div
-      :class="preview ? 'w-7/12' : 'w-4/12'"
+      :class="preview ? 'sm:w-7/12   w-full sm:m-0 m-4' : 'sm:w-4/12 w-5/6'"
       class="bg-white overflow-hidden flex-col rounded-xl flex font-medium h-fit"
     >
       <p class="p-3 w-full text-center border-b">Create new Post</p>
 
       <div class="flex w-full justify-between">
-        <div :class="preview ? 'w-6/12' : 'w-full'" class="h-96">
+        <div :class="preview ? 'sm:w-6/12 w-4/6' : 'w-full'" class="h-96">
           <div
             v-if="!preview"
             class="h-96 flex flex-col justify-center gap-5 items-center"
@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <div class="w-6/12 p-3 flex flex-col gap-4" v-if="preview">
+        <div class="sm:w-6/12 w-4/6 p-3 flex flex-col gap-4" v-if="preview">
           <ProfileCard
             :image="logginUser.image"
             :username="logginUser.username"
@@ -58,7 +58,7 @@
 import { ref, computed } from "vue";
 import { usedataStore } from "@/stores/dataStore.js";
 import { uploadFile } from "@/utils/index.js";
-import { createNewPost } from "@/services/user.js";
+import { createNewPost } from "@/services/post.js";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 import Load from "../Load.vue";

@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-5">
     <p class="font-bold text-xl">Edit Profile</p>
     <div class="bg-gray-100 p-4 flex rounded-2xl items-center justify-between">
-      <ProfileCard class="w-96" />
+      <ProfileCard :image="logginUser.image" class="w-96" />
       <div>
         <button
           @click="changeProfile = true"
@@ -55,13 +55,11 @@ import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 
 import ProfileCard from "./ProfileCard.vue";
-import { onMounted, computed, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed, ref } from "vue";
 
 const store = usedataStore();
 const logginUser = computed(() => store.getLoggedInUser);
 
-const router = useRouter();
 const $toast = useToast();
 
 const genderOptions = ["Prefer not to say", "Female", "Male", "Others"];
@@ -77,8 +75,6 @@ const handleEdit = async () => {
     loading.value = true;
     await editUserProfile(data.value);
     $toast.success("Profile saved");
-
-    console.log("edited");
   } catch (error) {
     console.log(error.message);
   } finally {

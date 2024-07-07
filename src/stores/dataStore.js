@@ -15,13 +15,36 @@ export const usedataStore = defineStore("dataStore", {
     PostSaved: [],
     allPostSaved: [],
     loggedInUser: null,
+    recentSearched: [],
+    notifications: [],
   }),
 
   getters: {
     getLoggedInUser: (state) => state.loggedInUser,
   },
 
-  actions: {},
+  actions: {
+    // loadSearchHistory() {
+    //   const history = JSON.parse(localStorage.getItem("recentSearched")) || [];
+    //   this.recentSearched = history;
+    //   console.log(this.recentSearched, "es");
+    // },
+    // updateSearchHistory(query) {
+    //   if (!this.recentSearched.includes(query)) {
+    //     this.recentSearched.unshift(query);
+    //     if (this.recentSearched.length > 10) {
+    //       this.recentSearched.pop();
+    //     }
+    //     localStorage.setItem(
+    //       "recentSearched",
+    //       JSON.stringify(this.recentSearched)
+    //     );
+    //   }
+    // },
+    // selectHistory(history) {
+    //   this.query = history;
+    // },
+  },
 
   persist: true,
 });

@@ -8,6 +8,7 @@
       :path="menu?.path"
       @click="handleMenuClick(menu)"
     />
+    <CreatePost v-if="newPost" @close="newPost = false" />
   </div>
 </template>
 
@@ -15,8 +16,17 @@
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import MenuItems from "@/components/MenuItems.vue";
+import CreatePost from "@/components/Post/CreatePost.vue";
 
+import { usedataStore } from "@/stores/dataStore";
+
+const store = usedataStore();
+const route = useRoute();
 const router = useRouter();
+
+const logginUser = computed(() => store.getLoggedInUser);
+
+const newPost = ref(false);
 
 const menuList = ref([
   {
@@ -38,12 +48,19 @@ const menuList = ref([
     icon: "pi pi-plus-circle",
     path: null,
     routeName: null,
+    action: () => {
+      newPost.value = true;
+    },
   },
   {
     label: "Profile",
     icon: "pi pi-image",
-    path: "/profile",
-    routeName: "ProfilePage",
+    path: null,
+    routeName: null,
+    action: () => {
+      router.push(`/${logginUser.value.username}`);
+      console.log("clicked");
+    },
   },
 ]);
 
@@ -51,6 +68,9 @@ const handleMenuClick = (menu) => {
   if (menu?.routeName) {
     router.push({ name: menu.routeName });
     return;
+  }
+  if (menu.action) {
+    menu.action();
   }
 };
 </script>

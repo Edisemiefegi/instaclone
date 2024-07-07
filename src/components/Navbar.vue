@@ -7,48 +7,43 @@
       <div
         class="border p-1.5 flex justify-center items-center gap-2 rounded-lg bg-slate-200"
       >
-        <i class="pi pi-search"></i>
+        <i class="pi pi-search cursor-pointer"></i>
         <input
-          v-model="searchtext"
+          v-model="searchQuery"
+          @focus="showSearch = true"
           type="text"
           placeholder="Search"
           class="border outline-none bg-slate-200"
         />
       </div>
       <div class="w-10">
-        <MenuItems icon="pi pi-heart" />
+        <MenuItems icon="pi pi-heart" @click="showNotifications" />
       </div>
     </nav>
-
-    <div
-      v-if="showSearch"
-      class="p-3 bg-white rounded-md w-52 h-fit shadow-sm fixed bottom-0 right-5"
-    >
-      <div class="flex justify-between">
-        <p class="font-medium">Recent</p>
-        <p class="text-blue-400 font-medium">Clear All</p>
-      </div>
-      <div class="flex justify-between">
-        <div class="rounded bg-gray-300 w-10 h-10"></div>
-        <p>Junejewels</p>
-        <i class="pi pi-times"></i>
-        {{ searchtext }}
-      </div>
+    <div v-if="showSearch">
+      <SearchComponent
+        class="fixed right-2 p-2 top-1.5 border-2 border-t-0 rounded-md h-full w-3/4"
+      />
     </div>
-    {{ searchtext }}
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
+import SearchComponent from "./search/SearchComponent.vue";
 import MenuItems from "./MenuItems.vue";
+import { useRouter } from "vue-router";
 
 const searchtext = ref("");
 const showSearch = ref(false);
+const searchQuery = ref("");
 
-if (searchtext.value.trim() !== "") {
-  showSearch = true;
-}
+const router = useRouter();
+
+const showNotifications = () => {
+  router.push({ name: "NotificationPage" });
+};
+
 // console.log(searchtext.value);
 </script>
 

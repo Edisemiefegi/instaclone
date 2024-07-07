@@ -66,7 +66,7 @@
 import ProfileCard from "@/components/ProfileSection/ProfileCard.vue";
 import { usedataStore } from "@/stores/dataStore.js";
 import { ref, computed, onMounted } from "vue";
-import { deletePost } from "@/services/user.js";
+import { deletePost } from "@/services/post.js";
 import InputComment from "./InputComment.vue";
 import Comments from "./Comments.vue";
 

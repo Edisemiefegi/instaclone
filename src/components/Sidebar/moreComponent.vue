@@ -49,6 +49,11 @@ const moreList = ref([
 
 const handleMenuClick = (menu) => {
   if (menu?.routeName) {
+    if (menu.label == "Log out") {
+      signoutfunc(logginUser.value);
+      console.log("logout");
+    }
+
     router.push({ name: menu.routeName });
 
     return;
@@ -56,10 +61,6 @@ const handleMenuClick = (menu) => {
   if (menu.label == "Saved") {
     const username = logginUser.value?.username;
     router.push(`/${username}?tab=${"saved"}`);
-  }
-  if (menu.label == "Log out") {
-    signoutfunc(logginUser.value);
-    console.log("logout");
   }
 };
 

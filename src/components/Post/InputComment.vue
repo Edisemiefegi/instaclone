@@ -16,19 +16,18 @@
     >
       Post
     </button>
-    <div
-      v-if="load"
-      class="rounded-full w-6 h-6 bg-blue-500 animate-spin flex justify-center items-center"
-    >
-      <div class="rounded-full w-4 h-4 bg-slate-500"></div>
+    <div v-if="load">
+      <spinner />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import { addComments } from "@/services/user.js";
+import { addComments } from "@/services/post.js";
 import { usedataStore } from "@/stores/dataStore.js";
+
+import spinner from "../spinner.vue";
 
 const store = usedataStore();
 

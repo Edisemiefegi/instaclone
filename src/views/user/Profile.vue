@@ -47,7 +47,9 @@ import AllPost from "@/components/Post/AllPost.vue";
 import SavedPost from "@/components/Post/SavedPost.vue";
 import UserProfile from "@/components/ProfileSection/UserProfile.vue";
 
-import { getUserByUsername, getPostByuserid } from "@/services/user.js";
+import { getPostByuserid } from "@/services/post.js";
+import { getUserByUsername } from "@/services/user.js";
+
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { usedataStore } from "@/stores/dataStore";
@@ -71,8 +73,6 @@ const loggedinUser = computed(() => store.getLoggedInUser);
 const loggedInUserPost = computed(() => store.posts);
 const userSavedPost = computed(() => store.PostSaved);
 
-console.log(username.value, "ssk");
-
 //Check if the username belongs to the loggedin user
 const isUserLoggedIn = computed(() => {
   return username.value === loggedinUser.value?.username;
@@ -95,13 +95,10 @@ const fetchUserData = async () => {
     userPosts.value = loggedInUserPost.value;
     console.log(userPosts.value, "fe");
   } else {
+    //get the user details from firebase and return
+
     user.value = await getUserByUsername(username.value);
     userPosts.value = await getPostByuserid(user.value.id);
-
-    console.log(user.value);
-    // console.log(user.value, "test", userPosts.value, user.value.id);
-
-    //get the user details from firebase and return
   }
 };
 
@@ -109,9 +106,7 @@ const fetchSavedposts = async () => {
   if (isUserLoggedIn.value) {
     user.value = loggedinUser.value;
     savedPosts.value = userSavedPost.value;
-    // console.log(savedPosts.value, "test");
   }
-  console.log("sa");
 };
 
 watch([loggedinUser, loggedInUserPost], () => {

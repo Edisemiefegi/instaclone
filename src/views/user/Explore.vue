@@ -1,4 +1,4 @@
-<template>Explore page</template>
+<template>Explore page coming soon</template>
 
 <script setup></script>
 

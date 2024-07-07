@@ -24,8 +24,9 @@
         Remove photo
       </button>
       <button class="p-3 w-full text-center text-sm border-b">Cancel</button>
-
-      {{ loading ? "Loading..." : "" }}
+      <div class="flex justify-center">
+        <spinner v-if="loading" />
+      </div>
     </div>
   </div>
 </template>
@@ -34,6 +35,7 @@
 import { ref } from "vue";
 import { uploadFile } from "@/utils/index.js";
 import { editProfilePhoto } from "@/services/user.js";
+import spinner from "../spinner.vue";
 
 const emit = defineEmits(["close"]);
 

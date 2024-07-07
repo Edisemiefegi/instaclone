@@ -39,26 +39,16 @@ console.log(props.user, props.user.id, "if");
 const store = usedataStore();
 const Users = computed(() => store.users);
 
-// const following = computed(() => props.user.following.includes(props.user.id));
+const following = computed(() => props.user.following.includes(props.user.id));
 
 const logginUser = computed(() => store.getLoggedInUser);
 
 const emit = defineEmits(["close", "handelSave"]);
-// const following = ref(true);
-
-// console.log(following.value);
 
 const savefunc = () => {
   emit("handelSave");
   emit("close");
 };
-
-// const followUser = async (user) => {
-//   const users = props.user;
-//   console.log(user, "sjshnsjk");
-
-//   await FollowingUsers(users, props.user.id);
-// };
 </script>
 
 <style></style>

@@ -34,6 +34,11 @@ const routes = [
         name: "ExplorePage",
         component: () => import("@/views/user/Explore.vue"),
       },
+      {
+        path: "/notification",
+        name: "NotificationPage",
+        component: () => import("@/views/user/Notifications.vue"),
+      },
     ],
   },
 

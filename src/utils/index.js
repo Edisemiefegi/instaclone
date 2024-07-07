@@ -1,5 +1,6 @@
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
+import moment from "moment";
 
 export const uploadFile = async (file) => {
   try {
@@ -13,4 +14,13 @@ export const uploadFile = async (file) => {
     console.log("error uploading file", error.message);
     throw error;
   }
+};
+
+export const formatDate = (date) => {
+  const timestampFromFirebase = new Date(date.seconds * 1000);
+
+  // Convert to relative time using Moment.js
+  const relativeTime = moment(timestampFromFirebase).fromNow();
+
+  return relativeTime;
 };

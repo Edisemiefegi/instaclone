@@ -12,8 +12,8 @@ import {
   getDocs,
   deleteDoc,
 } from "@/firebase.js";
+
 import { usedataStore } from "@/stores/dataStore";
-// import { get } from "firebase/database";
 
 export const editProfilePhoto = async (img) => {
   try {
@@ -60,101 +60,6 @@ export const editUserProfile = async (user) => {
   }
 };
 
-export const createNewPost = async (data) => {
-  try {
-    const store = usedataStore();
-
-    const userpost = {
-      postid: "",
-      userid: store.loggedInUser.id,
-      caption: data.caption,
-      createdAt: "",
-      likedBy: [],
-      comments: [],
-      image: data.image,
-    };
-
-    const docRef = await addDoc(collection(db, "posts"), userpost);
-    console.log("Document written with ID: ", docRef.id);
-
-    await updateDoc(docRef, {
-      postid: docRef.id,
-    });
-
-    console.log(userpost);
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
-
-export const initUserPost = async () => {
-  try {
-    const store = usedataStore();
-    const userid = store.loggedInUser.id;
-
-    console.log("USER ID", userid);
-
-    const q = query(collection(db, "posts"), where("userid", "==", userid));
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const posts = [];
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        posts.push(data);
-      });
-
-      store.$patch({
-        posts,
-      });
-    });
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
-
-export const deletePost = async (id) => {
-  await deleteDoc(doc(db, "posts", id));
-};
-
-export const getAllUsersPosts = async () => {
-  try {
-    const store = usedataStore();
-
-    const q = query(collection(db, "posts"));
-    const posts = [];
-
-    const querySnapshot = await getDocs(q);
-
-    const promises = querySnapshot.docs.map(async (doc) => {
-      const post = doc.data();
-      const user = await getUserByID(post?.userid);
-      console.log(user, "us");
-      post.user = user;
-      posts.push(post);
-    });
-
-    await Promise.all(promises);
-    // posts.forEach(async (e) => {
-    //   await addLikesToPost(e.postid, e.userid);
-
-    //   await unlikePost(e.postid, e.userid);
-    //   console.log(e?.userid, "userid", e?.postid, "postsid");
-    // });
-
-    store.$patch({
-      allPosts: posts,
-    });
-    console.log(store.allPosts, "al");
-  } catch (error) {
-    console.log(error.message);
-
-    throw error;
-  }
-};
-
 export const getAllusers = async () => {
   try {
     const store = usedataStore();
@@ -197,164 +102,19 @@ export const getUserByID = async (userid) => {
 
 export const getUserByUsername = async (username) => {
   try {
+    if (!username) return;
     const q = query(collection(db, "users"), where("username", "==", username));
 
     const queryDocs = await getDocs(q);
 
     const user = queryDocs.docs[0].data();
-    // console.log(username, user);
+    if (!user) return;
+    console.log(username, user, "hhhyjyfy");
 
     return user;
   } catch (error) {
     console.error("Error fetching user:", error);
   }
-};
-
-export const getPostByuserid = async (userid) => {
-  try {
-    const q = query(collection(db, "posts"), where("userid", "==", userid));
-
-    const user = [];
-
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      user.push(doc.data());
-    });
-
-    return user;
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
-
-export const likeUnlikePost = async (post, userid) => {
-  if (!post) return;
-  const postRef = doc(db, "posts", post.postid);
-
-  // Check if the user already liked the post
-  if (post.likedBy.includes(userid)) {
-    post.likedBy = post.likedBy.filter((id) => id !== userid);
-  } else {
-    post.likedBy.push(userid);
-  }
-
-  const newLikedByArray = post.likedBy;
-
-  await updateDoc(postRef, {
-    likedBy: newLikedByArray,
-  });
-
-  console.log("Post liked successfully");
-};
-
-export const togglesavePost = async (post) => {
-  try {
-    const store = usedataStore();
-    const postExist = store.PostSaved.find((e) => e.post.postid == post.postid);
-
-    if (!postExist) {
-      const savedpost = {
-        post: post,
-        userid: store.loggedInUser.id,
-        savedpostid: "",
-      };
-
-      const saveRef = await addDoc(collection(db, "savedPosts"), savedpost);
-
-      await updateDoc(saveRef, {
-        savedpostid: saveRef.id,
-      });
-    } else {
-      const data = store.PostSaved.filter((e) => e.post.postid !== post.postid);
-      store.$patch({
-        PostSaved: data,
-      });
-
-      let id = postExist.savedpostid;
-      await deleteDoc(doc(db, "savedPosts", id));
-    }
-
-    getuserSavedPosts();
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
-
-export const getuserSavedPosts = async () => {
-  try {
-    const store = usedataStore();
-    const userid = store.loggedInUser.id;
-    const post = [];
-
-    const q = query(
-      collection(db, "savedPosts"),
-      where("userid", "==", userid)
-    );
-
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      post.push(data);
-      // doc.data() is never undefined for query doc snapshots
-    });
-
-    store.$patch({
-      PostSaved: post,
-    });
-    // console.log(post, store.PostSaved, "steie");
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-export const addComments = async (post, text) => {
-  try {
-    const store = usedataStore();
-    const userid = store.loggedInUser.id;
-
-    const docRef = doc(db, "posts", post.postid);
-    const userRef = doc(db, "users", userid);
-    const docSnap = await getDoc(userRef);
-
-    const data = {
-      users: {
-        user: docSnap.data(),
-      },
-      commentId: generateUniqueId(),
-      message: text,
-    };
-
-    post.comments.push(data);
-    const addcomment = post.comments;
-
-    await updateDoc(docRef, {
-      comments: addcomment,
-    });
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
-
-export const generateUniqueId = () => {
-  return "id-" + Date.now() + "-" + Math.floor(Math.random() * 1000000);
-};
-
-export const deletecomment = async (post, id) => {
-  if (!post) {
-    console.error("postId is undefined or null");
-    return;
-  }
-  const docRef = doc(db, "posts", post.postid);
-
-  const newComment = post.comments.filter((e) => e.commentId !== id);
-  post.comments = newComment;
-
-  await updateDoc(docRef, {
-    comments: newComment,
-  });
 };
 
 export const FollowingUsers = async (user) => {
@@ -416,4 +176,38 @@ const removeFollowingAndFollowrFromUser = (user) => {
   delete clonedUser.following;
 
   return clonedUser;
+};
+
+export const handleSearch = async (username) => {
+  try {
+    console.log(username);
+    if (!username) return;
+
+    const store = usedataStore();
+    const logedduser = store.loggedInUser;
+    let users = [];
+
+    const q = query(
+      collection(db, "users"),
+      where("username", ">=", username.toLowerCase()),
+      where("username", "<", username.toLowerCase() + "\uf8ff")
+    );
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      users.push(data);
+      // doc.data() is never undefined for query doc snapshots
+    });
+    console.log(users, "u");
+
+    return users;
+
+    // store.recentSearched.push(...users);
+
+    // console.log(store.recentSearched, "recent");
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
 };

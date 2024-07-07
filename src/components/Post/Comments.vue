@@ -40,7 +40,7 @@
 import ProfileCard from "@/components/ProfileSection/ProfileCard.vue";
 import { ref, computed, onMounted } from "vue";
 import { usedataStore } from "@/stores/dataStore.js";
-import { deletecomment } from "@/services/user.js";
+import { deletecomment } from "@/services/post.js";
 const store = usedataStore();
 
 const props = defineProps({

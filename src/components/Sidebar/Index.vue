@@ -18,7 +18,13 @@
           @click="handleMenuClick(menu)"
         />
         <div v-on-click-outside="closeSearch">
-          <Search v-if="showSearch && collapsed" />
+          <sideSearch v-if="showSearch && collapsed" />
+        </div>
+        <div v-on-click-outside="closeNotification">
+          <NotificationComponent
+            class="bg-white border bottom-0 left-16 transition-all ease-out duration-150 w-96 rounded-tr-2xl rounded-br-2xl fixed h-full"
+            v-if="showNotification && collapsed"
+          />
         </div>
       </div>
       <div
@@ -39,7 +45,8 @@
 import MenuItems from "../MenuItems.vue";
 import moreComponent from "./moreComponent.vue";
 import CreatePost from "../Post/CreatePost.vue";
-import Search from "./Search.vue";
+import sideSearch from "../search/sideSearch.vue";
+import NotificationComponent from "./NotificationComponent.vue";
 
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -55,6 +62,7 @@ const logginUser = computed(() => store.getLoggedInUser);
 const collapsed = computed(() => store.collapsed);
 const showMore = ref(false);
 const showSearch = ref(false);
+const showNotification = ref(false);
 const newPost = ref(false);
 
 const closeMore = () => {
@@ -62,6 +70,9 @@ const closeMore = () => {
 };
 const closeSearch = () => {
   showSearch.value = false;
+};
+const closeNotification = () => {
+  showNotification.value = false;
 };
 
 const menuList = ref([
@@ -99,6 +110,7 @@ const menuList = ref([
       store.$patch({
         collapsed: !collapsed.value,
       });
+      showNotification.value = true;
       console.log(collapsed.value);
     },
   },

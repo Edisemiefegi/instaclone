@@ -23,18 +23,18 @@ export const registerUser = async (user) => {
       user.password
     );
     const id = userCredential?.user?.uid;
+    const username = user.username.toLowerCase();
 
     const userdetails = {
       id: id,
       email: user.email,
       fullname: user.fullname,
-      username: user.username,
+      username: username,
       password: user.password,
       bio: "",
       followers: [],
       following: [],
       image: "",
-      post: [],
       role: "user",
       gender: "",
     };
@@ -44,7 +44,7 @@ export const registerUser = async (user) => {
       loggedInUser: userdetails,
     });
 
-    console.log(store.loggedInUser, userdetails);
+    // console.log(store.loggedInUser, userdetails);
   } catch (error) {
     throw error;
     console.log(error.message);
@@ -85,7 +85,7 @@ export const loginfunc = async (user) => {
 export const resetPassword = async (user) => {
   try {
     const sendEmail = await sendPasswordResetEmail(auth, user.email);
-    console.log(sendEmail, user.email, "sent");
+    // console.log(sendEmail, user.email, "sent");
   } catch (error) {
     throw error;
     console.log(error.message);
@@ -99,7 +99,9 @@ export const signoutfunc = () => {
     signOut(auth);
     store.$patch({
       loggedInUser: null,
+      recentSearched: [],
     });
+    // console.log(store.loggedInUser, "signoutnull");
   } catch (error) {
     console.log(error.message);
     throw error;
