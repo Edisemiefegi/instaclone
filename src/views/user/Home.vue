@@ -52,7 +52,7 @@
         />
       </div>
     </div>
-    <iconLoader v-if="load" />
+    <iconLoader v-if="loader" />
   </main>
 </template>
 
@@ -67,7 +67,7 @@ import iconLoader from "../../components/iconLoader.vue";
 
 const store = usedataStore();
 
-const load = ref(false);
+const loader = ref(false);
 
 const logginUser = computed(() => store.getLoggedInUser);
 
@@ -75,11 +75,11 @@ const allposts = computed(() => store.allPosts);
 
 onMounted(() => {
   try {
-    load.value = true;
+    loader.value = true;
     getAllUsersPosts();
   } catch (error) {
   } finally {
-    load.value = false;
+    loader.value = false;
   }
 });
 </script>

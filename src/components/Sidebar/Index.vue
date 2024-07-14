@@ -98,12 +98,7 @@ const menuList = ref([
       console.log(collapsed.value);
     },
   },
-  {
-    label: "Explore",
-    icon: "pi pi-compass",
-    path: "/explore",
-    routeName: "ExplorePage",
-  },
+
   {
     label: "Notifications",
     icon: "pi pi-heart",

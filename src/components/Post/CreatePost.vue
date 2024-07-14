@@ -29,7 +29,7 @@
               </button>
             </UploadFile>
           </div>
-          <Load v-if="loading" />
+          <spinner v-if="loading" />
 
           <div v-if="preview" class="aspect-square h-full w-full">
             <img :src="data.image" class="h-full object-cover w-full" alt="" />
@@ -62,7 +62,7 @@ import { uploadFile } from "@/utils/index.js";
 import { createNewPost } from "@/services/post.js";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
-import Load from "../Load.vue";
+import spinner from "../spinner.vue";
 import ProfileCard from "../ProfileSection/ProfileCard.vue";
 import UploadFile from "../ui/UploadFile.vue";
 

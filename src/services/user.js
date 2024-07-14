@@ -154,7 +154,7 @@ export const FollowingUsers = async (user) => {
         logedduser,
         null,
         "follow",
-        "followed you"
+        "started following you."
       );
     }
 

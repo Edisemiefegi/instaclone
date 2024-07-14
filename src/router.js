@@ -29,11 +29,7 @@ const routes = [
         name: "SettingsPage",
         component: () => import("@/views/user/Settings.vue"),
       },
-      {
-        path: "/explore",
-        name: "ExplorePage",
-        component: () => import("@/views/user/Explore.vue"),
-      },
+
       {
         path: "/notification",
         name: "NotificationPage",

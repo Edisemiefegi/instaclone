@@ -37,13 +37,6 @@ const menuList = ref([
   },
 
   {
-    label: "Explore",
-    icon: "pi pi-compass",
-    path: "/explore",
-    routeName: "ExplorePage",
-  },
-
-  {
     label: "Create",
     icon: "pi pi-plus-circle",
     path: null,
