@@ -9,22 +9,19 @@
   <ViewPost
     :open="isModalOpen"
     :post="post"
-    :user="props.post.user"
+    :user="user"
     @close="isModalOpen = false"
   />
 </template>
 
 <script setup>
 import ViewPost from "./ViewPost.vue";
-
-import { ref, computed, onMounted } from "vue";
-import { usedataStore } from "@/stores/dataStore.js";
+import { ref } from "vue";
 
 const props = defineProps({
   post: Object,
   user: Object,
 });
-const store = usedataStore();
 
 const isModalOpen = ref(false);
 
@@ -32,11 +29,7 @@ const openModal = (item) => {
   isModalOpen.value = true;
 };
 
-console.log(props.post.user, "pr");
-
-onMounted(async () => {
-  // console.log(props.post);
-});
+// console.log(props.user, "pr");
 </script>
 
 <style></style>

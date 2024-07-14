@@ -7,7 +7,7 @@
     >
       <button
         class="p-3 w-full text-center text-sm border-b"
-        @click="followUser(Users)"
+        @click="followUser()"
       >
         <span v-if="following"> Unfollow</span> <span v-else>follow</span>
       </button>
@@ -27,6 +27,7 @@
 
 <script setup>
 import { usedataStore } from "@/stores/dataStore.js";
+import { FollowingUsers } from "@/services/user.js";
 
 import { ref, computed } from "vue";
 
@@ -39,15 +40,23 @@ console.log(props.user, props.user.id, "if");
 const store = usedataStore();
 const Users = computed(() => store.users);
 
-const following = computed(() => props.user.following.includes(props.user.id));
-
 const logginUser = computed(() => store.getLoggedInUser);
+
+const following = computed(() =>
+  logginUser.value.following.find((e) => e.id === props.user.id)
+);
+// console.log(following.value, "folo", logginUser.value.following, props.user.id);
 
 const emit = defineEmits(["close", "handelSave"]);
 
 const savefunc = () => {
   emit("handelSave");
   emit("close");
+};
+
+const followUser = async () => {
+  console.log(logginUser.value, props.user, "pep");
+  await FollowingUsers(props.user);
 };
 </script>
 

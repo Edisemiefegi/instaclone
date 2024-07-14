@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
 import PostCard from "../Post/PostCard.vue";
 
 const props = defineProps({
@@ -18,7 +17,7 @@ const props = defineProps({
     default: () => [],
   },
 });
-// console.log(props.posts, "allpostc");
+// console.log(props.user, "allusersg");
 </script>
 
 <style></style>

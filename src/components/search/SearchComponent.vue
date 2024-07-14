@@ -1,17 +1,23 @@
 <template>
   <div class="bg-white w-full h-full">
     <div class="flex flex-col gap-6">
-      <div
-        class="border p-2 flex items-center gap-2 w-full rounded-lg bg-slate-200"
-      >
-        <i class="pi pi-search cursor-pointer" @click="triggerSearch"></i>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search"
-          autofocus
-          class="border outline-none bg-slate-200"
-        />
+      <div class="flex justify-between items-center w-full p-2">
+        <div
+          class="border p-2 flex items-center gap-2 sm:w-full w-4/5 rounded-lg bg-slate-200"
+        >
+          <i class="pi pi-search cursor-pointer" @click="triggerSearch"></i>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search"
+            autofocus
+            class="border-none outline-none bg-slate-200"
+          />
+        </div>
+        <i
+          class="pi pi-times block sm:hidden cursor-pointer w-fit"
+          @click="closeSearch"
+        ></i>
       </div>
       <div class="border w-full"></div>
     </div>
@@ -47,6 +53,7 @@
         >
           <div class="flex justify-between w-full items-center">
             <ProfileCard
+              @click="closeSearch"
               :username="user?.username"
               :image="user?.image"
               class="cursor-pointer"
@@ -64,10 +71,13 @@
 
 <script setup>
 import ProfileCard from "@/components/ProfileSection/ProfileCard.vue";
-import { onMounted, computed, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { usedataStore } from "@/stores/dataStore";
 import { handleSearch } from "@/services/user.js";
 import { useDebounce } from "@/hooks/useDebounce.js";
+import { inject } from "vue";
+
+const closeSearch = inject("closeSearch");
 
 const store = usedataStore();
 
@@ -85,21 +95,23 @@ watch(debouncedValue, () => {
 const triggerSearch = async () => {
   const text = searchQuery.value.toLowerCase();
   results.value = await handleSearch(text);
-  console.log(results.value, "res");
+  // console.log(results.value, "res");
 };
 
 const addToRecentSearched = (user) => {
+  // check if user has already been added to recent searched
   const data = recentSearches.value.find((e) => {
-    console.log(e.username, user.username, "usrrname");
+    // console.log(e.username, user.username, "usrrname");
     if (e.username == user.username) {
       return e;
     }
   });
-  console.log(data, "d");
+
+  // if not then add to recent searched
   if (!data) {
     recentSearches.value.push(user);
   }
-  console.log(recentSearches.value, "addre");
+  closeSearch();
 };
 
 const handleDeleteSearch = (user) => {

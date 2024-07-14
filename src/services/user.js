@@ -1,19 +1,16 @@
 import {
   doc,
-  setDoc,
   db,
   updateDoc,
   getDoc,
   collection,
-  addDoc,
   query,
   where,
-  onSnapshot,
   getDocs,
-  deleteDoc,
 } from "@/firebase.js";
 
 import { usedataStore } from "@/stores/dataStore";
+import { addNotification } from "@/services/notification";
 
 export const editProfilePhoto = async (img) => {
   try {
@@ -151,6 +148,14 @@ export const FollowingUsers = async (user) => {
     } else {
       logedduser.following.push(clonedUser);
       user.followers.push(clonedLoggedUser);
+
+      await addNotification(
+        user.id,
+        logedduser,
+        null,
+        "follow",
+        "followed you"
+      );
     }
 
     await updateDoc(docRef, {

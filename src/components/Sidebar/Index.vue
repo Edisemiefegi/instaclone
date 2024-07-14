@@ -48,7 +48,7 @@ import CreatePost from "../Post/CreatePost.vue";
 import sideSearch from "../search/sideSearch.vue";
 import NotificationComponent from "./NotificationComponent.vue";
 
-import { computed, ref } from "vue";
+import { computed, ref, provide } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { usedataStore } from "@/stores/dataStore";
 import { vOnClickOutside } from "@vueuse/components";
@@ -71,6 +71,9 @@ const closeMore = () => {
 const closeSearch = () => {
   showSearch.value = false;
 };
+
+provide("closeSearch", closeSearch);
+
 const closeNotification = () => {
   showNotification.value = false;
 };

@@ -13,21 +13,31 @@
           <p>
             {{ notification.message }}
           </p>
-          <div
-            class="w-16 h-16 rounded-md cursor-pointer"
-            @click="openModal(notification.post)"
-          >
-            <img
-              :src="notification.post.image"
-              alt=""
-              class="object-contain w-full overflow-hidden"
-            />
-            <ViewPost
-              :open="isModalOpen"
-              :post="notification.post"
-              :user="notification.post.user"
-              @close="isModalOpen = false"
-            />
+          <div v-if="notification.type !== 'follow'">
+            <div
+              class="w-16 h-16 rounded-md cursor-pointer"
+              @click="openModal(notification.post)"
+            >
+              <img
+                :src="notification.post.image"
+                alt=""
+                class="object-contain w-full overflow-hidden"
+              />
+              <ViewPost
+                :open="isModalOpen"
+                :post="notification.post"
+                :user="notification.post.user"
+                @close="isModalOpen = false"
+              />
+            </div>
+          </div>
+          <div v-else>
+            <button
+              class="p-2 rounded-lg w-24 text-center text-white bg-blue-400 text-sm border-b"
+              @click="followUser()"
+            >
+              <span>follow</span>
+            </button>
           </div>
         </div>
       </div>

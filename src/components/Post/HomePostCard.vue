@@ -14,20 +14,18 @@
     </div>
     <div v-if="showMore">
       <PostMoreDropdown
-        v-for="item in users"
-        :key="item"
-        :user="item"
+        :user="post?.user"
         @close="showMore = false"
         @handelSave="handelSavePost()"
       />
     </div>
 
-    <div class="w-full h-[520px] rounded-md">
+    <div class="w-full aspect-square rounded-md">
       <img :src="post.image" alt="" class="w-full h-full object-cover" />
     </div>
 
     <div class="flex justify-between text-2xl">
-      <div>
+      <div class="flex gap-3">
         <i
           @click="handelPostLikes"
           class="pi pi-heart cursor-pointer"

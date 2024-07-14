@@ -9,12 +9,12 @@
     </i>
     <div
       :class="preview ? 'sm:w-7/12   w-full sm:m-0 m-4' : 'sm:w-4/12 w-5/6'"
-      class="bg-white overflow-hidden flex-col rounded-xl flex font-medium h-fit"
+      class="bg-white overflow-hidden flex-col rounded-xl flex font-medium h-96"
     >
       <p class="p-3 w-full text-center border-b">Create new Post</p>
 
-      <div class="flex w-full justify-between">
-        <div :class="preview ? 'sm:w-6/12 w-4/6' : 'w-full'" class="h-96">
+      <div class="flex w-full h-full justify-between">
+        <div :class="preview ? ' w-6/12' : 'w-full'" class="h-full border p-1">
           <div
             v-if="!preview"
             class="h-96 flex flex-col justify-center gap-5 items-center"
@@ -30,12 +30,13 @@
             </UploadFile>
           </div>
           <Load v-if="loading" />
-          <div v-if="preview">
-            <img :src="data.image" class="h-96 object-cover w-full" alt="" />
+
+          <div v-if="preview" class="aspect-square h-full w-full">
+            <img :src="data.image" class="h-full object-cover w-full" alt="" />
           </div>
         </div>
 
-        <div class="sm:w-6/12 w-4/6 p-3 flex flex-col gap-4" v-if="preview">
+        <div class="w-6/12 p-3 flex flex-col gap-4" v-if="preview">
           <ProfileCard
             :image="logginUser.image"
             :username="logginUser.username"

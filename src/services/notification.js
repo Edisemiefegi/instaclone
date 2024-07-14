@@ -16,18 +16,27 @@ import { usedataStore } from "@/stores/dataStore";
 // import { get } from "firebase/database";
 
 export const addNotification = async (userId, sender, post, type, message) => {
-  console.log(sender, sender.id, "id");
   const store = usedataStore();
   const userid = store.loggedInUser.id;
 
-  const notify = await AlreadyNotifiedUser(post.postid, sender.id, type);
+  if (!userId || !sender || !sender.id || !type || !message) {
+    console.error("Invalid data provided to addNotification");
+    return;
+  }
+
+  const notify = await AlreadyNotifiedUser(
+    post?.postid,
+    sender.id,
+    type,
+    userid
+  );
 
   if (!notify) {
     const notificationRef = collection(db, "notifications");
     await addDoc(notificationRef, {
       userId,
       sender,
-      post,
+      post: post || null, // post can be null if type is follow
       message,
       type,
       read: false,
@@ -36,26 +45,38 @@ export const addNotification = async (userId, sender, post, type, message) => {
   }
 };
 
-export const AlreadyNotifiedUser = async (postid, userid, type) => {
-  if (type === "comment") return false;
+export const AlreadyNotifiedUser = async (
+  postId = null,
+  senderid,
+  type,
+  userid
+) => {
   const notifyRef = collection(db, "notifications");
+  let q;
 
-  const q = query(
-    notifyRef,
-    where("post.postid", "==", postid),
-    where("sender.id", "==", userid),
-    where("type", "==", type)
-  );
-  const data = [];
+  if (type === "comment") return false;
+
+  if (type === "follow") {
+    q = query(
+      notifyRef,
+      where("userId", "==", userid),
+      where("sender.id", "==", senderid),
+      where("type", "==", type)
+    );
+  } else if (type == "like" && postId) {
+    q = query(
+      notifyRef,
+      where("post.postid", "==", postId),
+      where("sender.id", "==", senderid),
+      where("type", "==", type)
+    );
+  }
 
   const querySnapshot = await getDocs(q);
-  const user = querySnapshot.docs[0].data();
-  console.log(user, "quwer");
+  const data = [];
 
   querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
     data.push(doc.data());
-    console.log(data, "d");
   });
 
   if (!data.length) {
@@ -77,14 +98,12 @@ export const getNotification = async () => {
     let notifications = [];
 
     querySnapshot.forEach((doc) => {
-      console.log(doc.data(), "data");
       notifications.push(doc.data());
     });
-    console.log(notifications);
     store.$patch({
       notifications: notifications,
     });
   });
 
-  console.log(store.notifications, "notifications");
+  // console.log(store.notifications, "notifications");
 };
