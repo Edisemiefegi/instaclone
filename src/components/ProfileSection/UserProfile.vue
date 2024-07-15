@@ -48,7 +48,7 @@
                 class="fixed flex gap-2 items-center bg-white rounded-md shadow-md w-fit h-fit p-2 px-4"
                 v-if="showSettings"
               >
-                <p class="text-red-500">Log out</p>
+                <p class="text-red-500" @click="logout">Log out</p>
                 <i
                   class="pi pi-times text-sm cursor-pointer"
                   @click="showSettings = false"
@@ -114,7 +114,7 @@ import { usedataStore } from "@/stores/dataStore";
 import ChangeProfileImg from "../ProfileSection/ChangeProfileImg.vue";
 import { useRouter } from "vue-router";
 import { FollowingUsers } from "@/services/user.js";
-import moreComponent from "../Sidebar/moreComponent.vue";
+import { signoutfunc } from "@/services/auth.js";
 
 const store = usedataStore();
 const router = useRouter();
@@ -157,6 +157,11 @@ const followUser = async () => {
   } finally {
     load.value = false;
   }
+};
+
+const logout = () => {
+  signoutfunc(logginUser.value);
+  router.push({ name: "Auth" });
 };
 </script>
 
