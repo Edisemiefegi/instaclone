@@ -12,17 +12,25 @@
       <div
         class="bg-white flex-col gap-5 sm:flex-row flex w-10/12 h-[90%] rounded-sm"
       >
-        <div class="sm:w-5/12 w-full h-full">
+        <div class="sm:w-5/12 w-full sm:h-full h-3/6">
           <img
             :src="post.image"
             alt="Image"
             class="w-full h-full object-cover"
           />
         </div>
-        <div class="text w-6/12 pt-4 relative flex flex-col gap-5">
-          <div class="flex justify-between items-center cursor-pointer">
+        <div
+          class="text sm:w-3/6 w-full h-3/6 sm:h-full relative flex flex-col gap-5"
+        >
+          <div
+            class="flex justify-between pt-0 sm:pt-2.5 items-center cursor-pointer px-2"
+          >
             <ProfileCard :username="user?.fullname" :image="user?.image" />
-            <i class="pi pi-trash" @click="showdelete"></i>
+            <i
+              class="pi pi-trash"
+              @click="showdelete"
+              v-if="post.userid == logginUser.id"
+            ></i>
             <div
               class="w-fit flex flex-col gap-2 p-3 rounded-lg absolute bg-black/10 top-16 -right-4"
               v-if="show"
@@ -37,7 +45,7 @@
             </div>
           </div>
           <div class="border-b w-full"></div>
-          <div class="flex gap-3 flex-col h-96 overflow-auto">
+          <div class="flex gap-3 flex-col h-96 overflow-auto px-2">
             <div class="flex gap-3 items-center">
               <ProfileCard :username="user?.username" :image="user?.image" />
 
@@ -50,7 +58,7 @@
               :post="post"
             />
           </div>
-          {{ inputValue }}
+          <!-- {{ inputValue }} -->
           <InputComment
             class="absolute bottom-5 border-t"
             v-model:value="inputValue"

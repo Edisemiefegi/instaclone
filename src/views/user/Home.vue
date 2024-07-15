@@ -40,15 +40,17 @@
       <HomePostCard v-for="item in allposts" :key="item" :post="item" />
     </div>
 
-    <div class="hidden lg:block w-5/12 h-96 border-2">
+    <div class="hidden lg:block w-5/12 h-96">
       <div
-        class="bg-white flex flex-col gap-5 border"
-        v-for="item in 5"
-        :key="item"
+        class="bg-white flex flex-col gap-5"
+        v-for="item in suggestedUsers"
+        :key="item.id"
       >
         <ProfileCard
-          :username="logginUser?.username"
-          :fullname="logginUser?.fullname"
+          class="mb-5"
+          :username="item?.username"
+          :fullname="item?.fullname"
+          :image="item?.image"
         />
       </div>
     </div>
@@ -68,10 +70,19 @@ import iconLoader from "../../components/iconLoader.vue";
 const store = usedataStore();
 
 const loader = ref(false);
+const suggestedUsers = ref([]);
 
 const logginUser = computed(() => store.getLoggedInUser);
-
+const users = computed(() => store.users);
 const allposts = computed(() => store.allPosts);
+
+const getRandomItems = () => {
+  const shuffled = users.value.sort(() => 0.5 - Math.random());
+  suggestedUsers.value = shuffled.slice(0, 4);
+};
+getRandomItems();
+
+console.log(suggestedUsers.value, "suddhh");
 
 onMounted(() => {
   try {

@@ -33,9 +33,29 @@
             />
           </div>
         </div>
+        <div
+          class="flex md:flex-row flex-col justify-center items-center gap-4"
+        >
+          <div class="flex justify-center items-center gap-3">
+            <p class="text-xl">{{ user?.username }}</p>
 
-        <div class="flex md:flex-row flex-col gap-4">
-          <p class="text-xl">{{ user?.username }}</p>
+            <div class="sm:hidden block">
+              <i
+                class="pi pi-cog cursor-pointer"
+                @click="showSettings = true"
+              ></i>
+              <div
+                class="fixed flex gap-2 items-center bg-white rounded-md shadow-md w-fit h-fit p-2 px-4"
+                v-if="showSettings"
+              >
+                <p class="text-red-500">Log out</p>
+                <i
+                  class="pi pi-times text-sm cursor-pointer"
+                  @click="showSettings = false"
+                ></i>
+              </div>
+            </div>
+          </div>
           <button
             v-if="isLoggedIn"
             @click="showEdit"
@@ -94,6 +114,7 @@ import { usedataStore } from "@/stores/dataStore";
 import ChangeProfileImg from "../ProfileSection/ChangeProfileImg.vue";
 import { useRouter } from "vue-router";
 import { FollowingUsers } from "@/services/user.js";
+import moreComponent from "../Sidebar/moreComponent.vue";
 
 const store = usedataStore();
 const router = useRouter();
@@ -115,6 +136,7 @@ const logginUser = computed(() => store.getLoggedInUser);
 
 const changeProfile = ref(false);
 const load = ref(false);
+const showSettings = ref(false);
 
 const showEdit = () => {
   router.push({ name: "SettingsPage" });
